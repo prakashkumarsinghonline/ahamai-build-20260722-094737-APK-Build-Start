@@ -1,0 +1,64 @@
+name: AhamAI Build
+on:
+  workflow_dispatch:
+  push:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Install SDK packages
+        run: sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0" || true
+      - name: Locate Gradle project root
+        run: |
+          # Uploaded/pushed source often has its real Gradle root (settings.gradle[.kts] /
+          # gradlew) inside a subfolder rather than at the repo root - e.g. an unzipped
+          # project landing at my-app/. Find the SHALLOWEST directory holding one of those
+          # markers and build there instead of blindly assuming the repo root.
+          root=""
+          best_depth=999999
+          while IFS= read -r -d '' f; do
+            d=$(dirname "$f")
+            slashes=$(echo "$d" | tr -cd '/' | wc -c)
+            if [ "$slashes" -lt "$best_depth" ]; then
+              best_depth=$slashes
+              root="$d"
+            fi
+          done < <(find . \( -name .git -o -name node_modules -o -name .gradle -o -name build \) -prune -o -type f \( -name settings.gradle.kts -o -name settings.gradle -o -name gradlew \) -print0)
+          root=${root#./}
+          if [ -z "$root" ]; then root="."; fi
+          echo "Detected Gradle project root: $root"
+          echo "BUILD_DIR=$root" >> "$GITHUB_ENV"
+      - name: Compile check (fast fail)
+        run: |
+          cd "$BUILD_DIR"
+          if [ ! -f ./gradlew ] || [ ! -f ./gradle/wrapper/gradle-wrapper.jar ]; then
+            echo "Gradle wrapper missing - generating it"
+            gradle wrapper --gradle-version 8.7 --no-daemon
+          fi
+          chmod +x ./gradlew
+          # Lightweight Kotlin-only compile: catches type/syntax/unresolved-ref errors in
+          # seconds (no R8/minify/packaging) so a broken build fails fast with clear logs
+          # before the heavier assembleDebug step runs.
+          ./gradlew compileDebugKotlin --no-daemon --stacktrace
+      - name: Build debug APK
+        run: |
+          cd "$BUILD_DIR"
+          if [ ! -f ./gradlew ] || [ ! -f ./gradle/wrapper/gradle-wrapper.jar ]; then
+            echo "Gradle wrapper missing - generating it"
+            gradle wrapper --gradle-version 8.7 --no-daemon
+          fi
+          chmod +x ./gradlew
+          ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-apk
+          path: '**/build/outputs/apk/**/*.apk'
+          if-no-files-found: error
