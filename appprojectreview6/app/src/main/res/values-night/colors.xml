@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- AMOLED pure black + system splash (must match ChatPalette.DarkBg). -->
+    <!-- Match Compose SplashScreen dark bg (ChatPalette.DarkBg). -->
+    <color name="splash_bg">#0C0C0E</color>
+    <color name="brand_orange">#FC7F02</color>
+</resources>

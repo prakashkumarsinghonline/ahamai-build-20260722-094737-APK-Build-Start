@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ChatGPT light page + system splash (must match ChatPalette.LightBg). -->
+    <!-- Match Compose SplashScreen light bg (ChatPalette.LightBg). -->
+    <color name="splash_bg">#F5F5F7</color>
+    <color name="brand_orange">#FC7F02</color>
+</resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ad-services-config>
+    <!--
+      Privacy Sandbox on Android configuration for Google Mobile Ads.
+
+      This file resolves manifest-merger conflicts when multiple GMS libraries
+      (play-services-ads, play-services-measurement, etc.) all contribute the
+      android.adservices.AD_SERVICES_CONFIG property. Providing our own copy
+      with tools:replace="android:resource" in the manifest tells the merger
+      to use this single authoritative definition.
+
+      Enable the Attribution Reporting API for ad measurement and the Topics
+      API for interest-based advertising, as required by AdMob.
+    -->
+    <attribution enable="true" />
+    <topics enable="true" />
+</ad-services-config>

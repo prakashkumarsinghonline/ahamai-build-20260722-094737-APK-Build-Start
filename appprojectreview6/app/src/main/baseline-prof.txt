@@ -1,0 +1,20 @@
+# Baseline profile for AhamAI — precompiles the app's hot startup/scroll/stream paths
+# at install time (via androidx.profileinstaller) so the first runs are smooth.
+# Broad rules covering the whole app + the Compose/Coil/markdown paths it leans on.
+
+# ── App classes (all) ──
+Lcom/ahamai/app/**;
+HSPLcom/ahamai/app/**;->**(**)**
+SPLcom/ahamai/app/**;->**(**)**
+
+# ── Jetpack Compose runtime/ui/foundation/material3 (UI render + scroll hot paths) ──
+HSPLandroidx/compose/runtime/**;->**(**)**
+HSPLandroidx/compose/ui/**;->**(**)**
+HSPLandroidx/compose/foundation/**;->**(**)**
+HSPLandroidx/compose/foundation/lazy/**;->**(**)**
+HSPLandroidx/compose/foundation/pager/**;->**(**)**
+HSPLandroidx/compose/material3/**;->**(**)**
+HSPLandroidx/compose/animation/**;->**(**)**
+
+# ── Coil image loading (preview/screenshot/thumbnail decoding) ──
+HSPLcoil/**;->**(**)**

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!--
+      Allow cleartext HTTP ONLY to localhost / loopback (and the Android emulator host).
+      This lets a locally-run OmniRoute gateway (e.g. running in Termux ON this phone at
+      127.0.0.1:20128) be reachable. All other traffic stays HTTPS-only, so this does not
+      weaken the app's security for normal API providers.
+    -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">localhost</domain>
+        <domain includeSubdomains="true">127.0.0.1</domain>
+        <domain includeSubdomains="true">10.0.2.2</domain>
+    </domain-config>
+</network-security-config>
